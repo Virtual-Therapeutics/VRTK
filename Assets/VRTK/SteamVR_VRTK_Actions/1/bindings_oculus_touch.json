@@ -125,7 +125,7 @@
           }
         },
         {
-          "path": "/user/hand/right/input/x",
+          "path": "/user/hand/right/input/a",
           "mode": "button",
           "parameters": {},
           "inputs": {
@@ -138,22 +138,15 @@
           }
         },
         {
-          "path": "/user/hand/right/input/y",
+          "path": "/user/hand/right/input/b",
           "mode": "button",
           "parameters": {},
           "inputs": {
             "click": {
               "output": "/actions/vrtk/in/buttononeclick"
-            }
-          }
-        },
-        {
-          "path": "/user/hand/right/input/a",
-          "mode": "button",
-          "parameters": {},
-          "inputs": {
-            "click": {
-              "output": "/actions/vrtk/in/buttononeclick"
+            },
+            "touch": {
+              "output": "/actions/vrtk/in/buttononetouch"
             }
           }
         },
@@ -206,10 +199,6 @@
         {
           "output": "/actions/vrtk/in/skeletonrighthand",
           "path": "/user/hand/right/input/skeleton/right"
-        },
-        {
-          "output": "/actions/vrtk/in/skeletonrighthand",
-          "path": "/user/hand/left/input/skeleton/right"
         }
       ]
     }
