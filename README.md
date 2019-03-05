@@ -23,7 +23,7 @@ _* unsupported/experimental_
 
 > *NOTE:* SteamVR 2 is not _officially_ supported,
 > however this code base has been updated to work with
-> SteamVR Plugin 2.2RC1 and the new SteamVR Input System.
+> SteamVR Plugin 2.2.0 and the new SteamVR Input System.
 > Be sure to check the [README-SVR2IS.md] file for more
 > details, which can be found in the main VRTK folder.
 
@@ -118,7 +118,7 @@ Code released under the [MIT License].
 
 Any Third Party Licenses can be viewed in [THIRD_PARTY_NOTICES.md].
 
-[SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.2RC1/steamvr_unity_22rc1.unitypackage
+[SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.2.0/SteamVR_v220.unitypackage
 [SteamVR Plugin for Unity3d Github Repo]: https://github.com/ValveSoftware/openvr/tree/master/unity_package/Assets/SteamVR
 [Oculus Integration]: https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022
 [Ximmerse Unity SDK]: https://github.com/Ximmerse/SDK/tree/master/Unity
