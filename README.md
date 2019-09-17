@@ -1,69 +1,84 @@
-[![VRTK logo][VRTK-Image]](#)
+![vrtk logo](https://user-images.githubusercontent.com/1029673/29922542-f8ccb81c-8e4d-11e7-8fa3-b8607c550d77.png)
+> ### VRTK - Virtual Reality Toolkit
+> A productive VR Toolkit for rapidly building VR solutions in Unity3d.
 
-> ### VRTK v4 beta - Virtual Reality Toolkit
-> A productive toolkit for rapidly building spatial computing solutions in the Unity software.
+[![Slack](https://img.shields.io/badge/slack-chat-E24663.svg)](http://invite.vrtk.io)
+[![Documentation](https://img.shields.io/badge/readme-docs-3484C6.svg)](http://docs.vrtk.io)
+[![YouTube](https://img.shields.io/badge/youtube-channel-e52d27.svg)](http://videos.vrtk.io)
+[![Twitter Follow](https://img.shields.io/twitter/follow/vr_toolkit.svg?style=flat&label=twitter)](https://twitter.com/VR_Toolkit)
+[![Waffle](https://img.shields.io/badge/project-backlog-78bdf2.svg)](http://tracker.vrtk.io)
 
-[![Slack][Slack-Badge]][Slack]
-[![Documentation][Academy-Badge]][VRTK.Academy]
-[![Videos][Videos-Badge]][Videos]
-[![Twitter][Twitter-Badge]][Twitter]
-[![License][License-Badge]][License]
-[![Backlog][Backlog-Badge]][Backlog]
+| Supported SDK | Download Link |
+|---------------|---------------|
+| UnityEngine.VR | _Core Unity3d library_ |
+| VR Simulator | _Included_ |
+| SteamVR 1.2.3 | [SteamVR Plugin] |
+| Oculus | [Oculus Integration] |
+| Windows Mixed Reality | [Windows Mixed Reality For Unity] |
+| * Ximmerse | [Ximmerse Unity SDK] |
+| * Daydream | [Google VR SDK for Unity]
+| * HyperealVR | [Hypereal VR Unity Plugin]
 
-## Beta Disclaimer
+_* unsupported/experimental_
 
-VRTK v4 has not yet been released fully is still in the beta phase meaning there may still be undiscovered bugs, missing features and a lack of usable documentation. All of these things are being worked on but progress is slow as there is only one person actively working on VRTK v4 in their spare time so please be patient and respectful. You are free to use VRTK v4 in any way you wish, but if you feel you will struggle figuring stuff out for yourself without detailed documentation then it may be better off if you wait until the full release of VRTK v4. 
+> *NOTE:* SteamVR 2 is not supported.
 
-## Introduction
+## Documentation
 
-VRTK aims to make building spatial computing solutions in the [Unity] software fast and easy for beginners as well as experienced developers.
+The API documentation for the project can be found within this
+repository in [API.md] which includes the up to date documentation
+for this GitHub repository.
 
-> **Requires** the Unity software version 2018.3.10f1 (or above).
+Alternatively, the stable versions of the documentation can be viewed
+online at [http://docs.vrtk.io](http://docs.vrtk.io).
+
+## Frequently Asked Questions
+
+If you have an issue or question then check the [FAQ.md] document to
+see if your query has already been answered.
 
 ## Getting Started
 
-### Documentation
+  > *VRTK offers a VR Simulator that works without any third party SDK,
+  >  but VR device support requires a supported VR SDK to be imported
+  >  into the Unity project.*
 
-Visit the [VRTK.Academy] for a collection of educational content to help you get the most out of building spatial computing solutions with VRTK.
+ * Download or clone this repository.
+ * Open the folder in Unity to load the project.
+ * Have a look at the included example scenes.
 
-### Setting up the project
+The example scenes support all the VRTK supported VR SDKs. To make use
+of VR devices (besides the included VR Simulator) import the needed
+third party VR SDK into the project.
 
-* Create a new project in the Unity software version 2018.3.10f1 (or above) using 3D Template or open an existing project.
-* Ensure `Virtual Reality Supported` is checked:
-  * In the Unity software select `Main Menu -> Edit -> Project Settings` to open the `Project Settings` window.
-  * Select `Player` from the left hand menu in the `Project Settings` window.
-  * In the `Player` settings panel expand `XR Settings`.
-  * In `XR Settings` ensure the `Virtual Reality Supported` option is checked.
-* Ensure the project `Scripting Runtime Version` is set to `.NET 4.x Equivalent`:
-  * In the Unity software select `Main Menu -> Edit -> Project Settings` to open the `Project Settings` inspector.
-  * Select `Player` from the left hand menu in the `Project Settings` window.
-  * In the `Player` settings panel expand `Other Settings`.
-  * Ensure the `Scripting Runtime Version` is set to `.NET 4.x Equivalent`.
+For further information about setting up a specific SDK and using VRTK
+in your own project, check out the [GETTING_STARTED.md] document.
 
-> Note: Unity 2019.1 requires additional project setup before importing VRTK.
+## What's In The Box
 
-* Download and install the `XR Legacy Input Helpers` from the Unity Package Manager.
-  * In the Unity software select `Main Menu -> Window -> Package Manager` to open the `Package Manager` window.
-  * Select `XR Legacy Input Helpers` from the `Packages` tab in the `Package Manager` window.
-  * Click the `Install` button located in the bottom right of the `Package Manager` window.
-  * The `XR Legacy Input Helpers` package will now download and install into the project.
+VRTK is a collection of useful scripts and concepts to aid building VR
+solutions rapidly and easily in Unity3d 5+.
 
-### Cloning the repo
+It covers a number of common solutions such as:
 
-* Navigate to the project `Assets/` directory.
-* Git clone with required submodules into the `Assets/` directory:
-  * `git clone --recurse-submodules https://github.com/ExtendRealityLtd/VRTK.git`
-  * change to the newly cloned directory: `cd VRTK/`
-  * `git submodule init && git submodule update`
-* The Unity software will now import and compile the new files.
+ * Locomotion within virtual space.
+ * Interactions like touching, grabbing and using objects
+ * Interacting with Unity3d UI elements through pointers or touch.
+ * Body physics within virtual space.
+ * 2D and 3D controls like buttons, levers, doors, drawers, etc.
+ * And much more...
 
-### Running the example scene
+## Examples
 
-* Open the `VRTK/Samples/Farm/Scenes/ExampleScene` scene.
-* Enable `Maximize On Play` in the Unity Game view control bar to ensure no performance issues are caused by the Unity Editor overhead.
-* Play the scene in the Unity Editor (`CTRL` + `P`).
-* The scene should automatically play within any Unity supported XR hardware.
-* Explore the farm yard and enjoy!
+A collection of example scenes have been created to aid with
+understanding the different aspects of VRTK.
+
+A list of the examples can be viewed in [Examples/README.md] which includes
+an up to date list of examples showcasing the features of VRTK.
+
+The example scenes support all the VRTK supported VR SDKs. To make use
+of VR devices (besides the included VR Simulator) import the needed
+third party VR SDK into the project.
 
 ## Made With VRTK
 
@@ -71,34 +86,52 @@ Visit the [VRTK.Academy] for a collection of educational content to help you get
 
 Many games and experiences have already been made with VRTK.
 
-Check out the [Made With VRTK] website to see the full list.
+Check out the [MADE_WITH_VRTK.md] document to see the full list.
 
 ## Contributing
 
-We're not currently in a place where accepting contributions would be helpful. But as soon as we're ready we'll let you know!
+I would love to get contributions from you! Follow the instructions
+below on how to make pull requests.
+
+For the full contribution guidelines see the [CONTRIBUTING.md] document.
+
+## Pull requests
+
+ 1. [Fork] the project, clone your fork, and configure the remotes.
+    1. If you're submitting a bug fix or refactor pull request then
+    target the repository `master` branch.
+    2. If you're submitting a new feature or enhancement that changes
+    functionality then target the next release branch in the
+    repository (which is currently `3.3.0-alpha`).
+ 3. Commit your changes in logical units.
+ 4. Make sure all the example scenes are still working.
+ 5. Push your topic branch up to your fork.
+ 6. [Open a Pull Request] with a clear title and description.
 
 ## License
 
-Code released under the [MIT License][License].
+Code released under the [MIT License].
 
-## Disclaimer
+Any Third Party Licenses can be viewed in [THIRD_PARTY_NOTICES.md].
 
-These materials are not sponsored by or affiliated with Unity Technologies or its affiliates. "Unity" is a trademark or registered trademark of Unity Technologies or its affiliates in the U.S. and elsewhere.
+[SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/1.2.3/SteamVR.Plugin.unitypackage
+[SteamVR Plugin for Unity3d Github Repo]: https://github.com/ValveSoftware/openvr/tree/master/unity_package/Assets/SteamVR
+[Oculus Integration]: https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022
+[Ximmerse Unity SDK]: https://github.com/Ximmerse/SDK/tree/master/Unity
+[Google VR SDK for Unity]: https://developers.google.com/vr/unity/download
+[Hypereal VR Unity Plugin]: https://www.hypereal.com/#/developer/resource/download
+[Windows Mixed Reality For Unity]: https://developer.microsoft.com/en-us/windows/mixed-reality/install_the_tools
 
-[VRTK-Image]: https://user-images.githubusercontent.com/1029673/40060519-bb122e8c-584e-11e8-8402-ca168b327671.png
-[Unity]: https://unity3d.com/
-[Made With VRTK]: https://www.vrtk.io/madewith.html
-[License]: LICENSE.md
+[MIT License]: LICENSE.md
+[THIRD_PARTY_NOTICES.md]: THIRD_PARTY_NOTICES.md
+[CONTRIBUTING.md]: /.github/CONTRIBUTING.md
 
-[Slack-Badge]: https://img.shields.io/badge/slack-chat-E24663.svg
-[Academy-Badge]: https://img.shields.io/badge/vrtk-academy-3484C6.svg
-[Videos-Badge]: https://img.shields.io/badge/youtube-channel-e52d27.svg
-[Twitter-Badge]: https://img.shields.io/twitter/follow/vr_toolkit.svg?style=flat&label=twitter
-[Backlog-Badge]: https://img.shields.io/badge/project-backlog-78bdf2.svg
-[License-Badge]: https://img.shields.io/github/license/ExtendRealityLtd/VRTK.svg
+[FAQ.md]: /Assets/VRTK/Documentation/FAQ.md
+[MADE_WITH_VRTK.md]: /Assets/VRTK/Documentation/MADE_WITH_VRTK.md
+[API.md]: /Assets/VRTK/Documentation/API.md
+[GETTING_STARTED.md]: /Assets/VRTK/Documentation/GETTING_STARTED.md
+[THANK_YOU_CREDITS.md]: /Assets/VRTK/Documentation/THANK_YOU_CREDITS.md
+[Examples/README.md]: /Assets/VRTK/Examples/README.md
 
-[Slack]: http://invite.vrtk.io
-[VRTK.Academy]: https://academy.vrtk.io
-[Videos]: http://videos.vrtk.io
-[Twitter]: https://twitter.com/VR_Toolkit
-[Backlog]: http://tracker.vrtk.io
+[Fork]: http://help.github.com/fork-a-repo/
+[Open a Pull Request]: https://help.github.com/articles/using-pull-requests/
