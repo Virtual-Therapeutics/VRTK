@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>com.vthera.vrtk</id>
+    <version>3.4.0-test</version>
+    <title>Virtual Reality Toolkit</title>
+    <authors>Virtual Therapeutics</authors>
+    <owners>Clayton</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>VRTK - A fork of VRTK as of version 3.3.0</description>
+    <releaseNotes>
+      3.4.0
+        * Packaged up with an asmdef-friendly installer
+
+      3.3.0
+        * Rolls back to VRTK 3.3.0, without changes made for VRTK 4.0.0
+    </releaseNotes>
+    <copyright>Copyright 2019</copyright>
+  </metadata>
+
+  <files>
+    <!-- All packages should do this: -->
+    <file src="NugetInstallTools\**" target="tools" />
+
+    <!-- These filters are pretty unique to VRTK, since we're trying not to tweak the file layout: -->
+    <file src="Assets\VRTK\Source\Editor\**\*" target="lib\net46\Editor\VRTK" />
+    <file src="Assets\VRTK\**\Editor\**\*" target="lib\net46\Editor\" exclude="**\Source\**\*" />
+    <file src="Assets\VRTK\**\*" target="lib\net46\Runtime" exclude="**\Editor\**\*" />
+
+  </files>
+</package>
