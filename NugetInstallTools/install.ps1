@@ -1,11 +1,11 @@
 param($installPath, $toolsPath, $package, $project)
 
-$alwaysDebug = $false # change to $false for less logging
+$alwaysDebug = $false # change to $true for more logging
 
-function log($msg)
+function log()
 {
-    param([switch]$Debug)
-    if ($alwaysDebug==$true -or !$Debug.IsPresent)
+    param([string]$msg, [switch]$Debug)
+    if ($alwaysDebug -eq $true -or !$Debug.IsPresent)
     {
         echo "$msg"
     }
@@ -16,7 +16,7 @@ function log($msg)
     [System.IO.File]::AppendAllLines(".\vtnuget.install.log", [string[]]$msg, $utf8NoBOM)
 }
 
-log "install.ps1 started at $(Get-Date -Format o)"
+log "% install.ps1 started at $(Get-Date -Format o)"
 log "  Parameters Received:" -Debug
 log "    `$installPath $installPath" -Debug
 log "    `$toolspath $toolsPath" -Debug
@@ -25,9 +25,9 @@ log "    `$project ($project.ToString)" -Debug
 
 $initScript = Join-Path $PSScriptRoot "init.ps1"
 
-log "executing $initScript"
+log "* executing $initScript"
 
 & "$initScript" $installPath $toolsPath $package
 
-log "install.ps1 completed"
+log "% install.ps1 completed"
 log ""

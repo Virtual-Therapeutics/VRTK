@@ -1,21 +1,74 @@
-param($installPath, $toolsPath, $package)
+# Nugetizer.2019.10.19 Version
 
-# Nugetizer
+<#
+    .SYNOPSIS
+        Idempotent initialization of nuget packages to work with Unity's Assembly Definitions
+    .DESCRIPTION
+        This is invoked automatically for each package by our restore_packages.bat. It's also
+        invoked by Visual Studio both more and less frequently than one would prefer.
+    .NOTES
+        Variables named "Dir" are absolute or relative to CD. Variables named "Folder" are relative
+        to their parent, i.e. it's just the name of the folder
+
+        It extracts the package to transform this directory structure:
+        /...                                    $nugetParentDir
+          /nuget_packages                       $nugetRootDir
+            /source                             $nugetSourceDir
+              /packagename.version              $installPath
+                /lib                            ($libFolder)
+                  /netversion                   ($netVersionFolder)
+                    /Runtime/...                $runtimeSourceDir
+                    /Editor/...                 $editorSourceDir
+                    /Foundation/...             $foundationSourceDir
+                  /native                       $nativeSourceDir, ($nativeFolder)
+                /tools                          $toolsPath, ideally...
+
+        Into this directory structure:
+        /...                                    $nugetParentDir
+          /Runtime
+            /nuget                              $runtimeDestinationDir, ($outputNugetFolder)
+              /packagename.version/...
+          /Editor
+            /nuget                              $editorDestinationDir, ($outputNugetFolder)
+              /packagename.version/...
+          /nuget_packages                       $nugetRootDir
+            /Foundation                         $foundationDestinationDir
+              /packagename.version/...
+
+        The init.ps1 contained in VTUE also installs assembly definitions for these packages.
+#>
+
+param($installPath, $toolsPath, $package, [switch]$verbose, [switch]$interactive)
+Set-StrictMode -Version 1.0
 
 $alwaysDebug = $false # change to $true for more logging and pausing
 
 # TODO: Sure would be nice to derive these, instead of hard-coding these assumptions...
-$nugetRootName = "nuget_packages"       # parse from nuget.config at runtime?
-$srcFolder = "lib"                      # parse from nuspec at build time?    # ... or libFolder?
+$nugetRootFolder = "nuget_packages"     # parse from nuget.config at runtime?
+$nugetPackageSourceDir = ""             # parse from nuget.config at runtime?
+
+$libFolder = "lib"                      # parse from nuspec at build time?
 $netVersionFolder = "net46"             # parse from nuspec at build time?
 $nativeFolder = "native"                # parse from nuspec at build time?
+$nugetOutputFolder = "nuget"
 $logFile = ".\vtnuget-logs\vtnuget.install.log"      # this is fine. Could include packageName, parsed at build-time (e.g. from name of nuSpec)
 
 function Main() {
 
+    $packageName = Split-Path -Leaf $installPath
+
+    if ([String]::IsNullOrWhitespace($packageName)) {
+        $packageName = Split-Path -Leaf (Split-Path -Parent $PSScriptRoot)
+    }
+
+    if ([String]::IsNullOrWhitespace($packageName)) {
+        log "*** Invalid Arguments to Script $($PSScriptRoot)/$($MyInvocation.ScriptName)! I cannot even figure out what `$packageName is supposed to be... " -AsError
+        exit 1
+    }
+
     $filesToInit = Count-PackageFiles
     if ($filesToInit -eq 0) {
-        echo "* Package $(Split-Path $installPath -Leaf) has nothing to initialize. Exiting."
+        echo "* Package $packageName has nothing to initialize. Exiting."
         exit 0
     }
 
@@ -23,128 +76,131 @@ function Main() {
 
     # these spaces makes print-f debugging saner
     log ""
-    log "* Package $(Split-Path $installPath -Leaf) - init.ps1 started at $(Get-Date -Format o)"
+    log "* Package $packageName - init.ps1 started at $(Get-Date -Format o)"
     log "  Parameters Received:" -Debug
     log "    `$installPath:   $installPath" -Debug
     log "    `$toolspath:     $toolsPath" -Debug
     log "    `$package:       $package" -Debug
+    log "    `$verbose:       $verbose" -Debug
+    log "    `$interactive:   $interactive" -Debug
 
     if ($package -ne "NuGet.PackageManagement.VThera.ScriptPackage") {
         log "Hey! Listen! - Initializing packages with Visual Studio isn't supported yet.  Please run restore_packages.bat"
-        exit 1
+        exit 2
     }
 
     Debug-Pause
 
-    #### TODO: Maybe this could be read from the nuget.config file?
-    # find the root nuget package directory
-    $nugetRootDir = $installPath
-    $packageName = Split-Path -Leaf $nugetRootDir
-    $stop_dir = $packageName
-
-    $counter = 0
-    # if it's not this directory, keep looking upwards for it.
-    while($stop_dir -ne "$nugetRootName" -or $stop_dir -eq "") {
-        $nugetRootDir = Split-Path -Path $nugetRootDir
-        $stop_dir = Split-Path -Leaf $nugetRootDir
-    }
-
-    if ($stop_dir -eq "" -or $stop_dir -eq $null) {
-        # TODO: would be nice if this weren't hard-coded:
-        $msg = "*** Malformed Package! Cannot find '$nugetRootName' directory as parent of $installPath"
-        log "$msg" -AsError
-        exit 1
-    }
-
     log "  * Initializing $packageName NuGet Package..."
 
-    $nugetRootDir = Join-Path $nugetRootDir $stop_dir
-    #### end of mess that could be replaced by call to nuget, probably
+    $nugetRootDir, $packageSourceDir = Find-NugetDirs($installPath)
+    $nugetParentDir = (Split-Path -Path $nugetRootDir)
 
-    $runtimeSource = [IO.Path]::Combine($installPath, $srcFolder, $netVersionFolder, "Runtime")
-    $editorSource = [IO.Path]::Combine($installPath, $srcFolder, $netVersionFolder, "Editor")
-    $foundationSource = [IO.Path]::Combine($installPath, $srcFolder, $netVersionFolder, "Foundation")
-    $pluginSource = [IO.Path]::Combine($installPath, $srcFolder, $nativeFolder)
+    $runtimeSourceDir = [IO.Path]::Combine($installPath, $libFolder, $netVersionFolder, "Runtime")
+    $editorSourceDir = [IO.Path]::Combine($installPath, $libFolder, $netVersionFolder, "Editor")
+    $foundationSourceDir = [IO.Path]::Combine($installPath, $libFolder, $netVersionFolder, "Foundation")
+    $nativeSourceDir = [IO.Path]::Combine($installPath, $libFolder, $nativeFolder)
 
-    $runtimeDestinationFolder = [IO.Path]::Combine((Split-Path -Path $nugetRootDir), "Runtime")
-    $editorDestinationFolder = [IO.Path]::Combine((Split-Path -Path $nugetRootDir), "Editor")
-    $foundationDestinationFolder = [IO.Path]::Combine((Split-Path -Path $nugetRootDir), "Foundation")
-
+    $runtimeDestinationDir = [IO.Path]::Combine($nugetParentDir, "Runtime", $nugetOutputFolder)
+    $editorDestinationDir = [IO.Path]::Combine($nugetParentDir, "Editor", $nugetOutputFolder)
+    $foundationDestinationDir = [IO.Path]::Combine($nugetRootDir, "Foundation", $nugetOutputFolder) # yes, this one is intentionally different
 
     #This is done by everyone:
-    Move-DirContents $runtimeSource $runtimeDestinationFolder $packageName
-    Move-DirContents $editorSource $editorDestinationFolder $packageName
-    Move-DirContents $foundationSource $foundationDestinationFolder $packageName
-    Move-DirContents $pluginSource $runtimeDestinationFolder $packageName
+    Move-DirContents $runtimeSourceDir $runtimeDestinationDir $packageName
+    Move-DirContents $editorSourceDir $editorDestinationDir $packageName
+    Move-DirContents $foundationSourceDir $foundationDestinationDir $packageName
+    Move-DirContents $nativeSourceDir $runtimeDestinationDir $packageName
 
     # TODO: check to see if any files are left behind and if so indicate that something's bad about the package?
 
     Debug-Pause
 
     log "- init.ps1 completed - $packageName"
-    log ""
 
     $archivedLog = "$([io.path]::GetFileNameWithoutExtension("$logFile")).$(Get-Date -Format FileDateTimeUniversal)$([io.path]::GetExtension("$logFile"))"
     Move-Item "$logFile" (Join-Path (Split-Path $logFile -Parent) "$archivedLog")
 
-    if ($alwaysDebug -eq $true) {
-        echo "    this logFile is archived as $archivedLog"
+    if ($alwaysDebug -eq $true -or $verbose.IsPresent) {
+        echo "  this logFile is archived as $archivedLog"
     }
+
+    log ""
 }
 
 function Count-PackageFiles() {
     $filesToInit = 0
-    foreach ($dirEntry in Get-ChildItem (Join-Path $installPath $srcFolder) -Recurse -Force -File -Exclude *.meta) {
+    foreach ($dirEntry in Get-ChildItem (Join-Path $installPath $libFolder) -Recurse -Force -File -Exclude *.meta) {
         $filesToInit += 1
     }
     return $filesToInit
 }
 
-function Move-DirContents($source, $destRoot, $packageName) {
-    $srcCategory = (Split-Path $source -Leaf)
-    $destCategory = (Split-Path $destRoot -Leaf)
-    $shortSource = [IO.Path]::Combine($packageName, $srcFolder, $netVersionFolder, $srcCategory)
-    $shortDest = [IO.Path]::Combine($nugetRootName, $destCategory, $packageName)
+#### TODO: Maybe this could be read from the nuget.config file? or query nuget repositoryPath / use default
+function Find-NugetDirs($installPath) {
+    # find the root nuget package directory
+    $nugetRootDir = $installPath
+    $stopFolder = Split-Path -Leaf $nugetRootDir
+
+    $counter = 0
+    # if it's not this directory, keep looking upwards for it.
+    while($stopFolder -ne $nugetRootFolder -or [String]::IsNullOrWhitespace($stopFolder)) {
+        $nugetRootDir = Split-Path -Path $nugetRootDir
+        $stopFolder = Split-Path -Leaf $nugetRootDir
+        $counter = $counter + 1
+        if ($counter -gt 255) {
+            break;
+        }
+    }
+
+    if ($stopFolder -eq "" -or $stopFolder -eq $null -or -$counter -ge 255) {
+        log "*** Malformed Package! Cannot find '$nugetRootName' directory as parent of $installPath (after $counter searches)" -AsError
+        exit 1
+    }
+
+    $packageSourceDir = Join-Path $nugetRootDir $stopFolder
+    return $nugetRootDir, $packageSourceDir
+}
+
+function Move-DirContents($sourceDir, $destinationDir, $packageName) {
+    $shortSrc, $shortDest = Get-LoggableNames $sourceDir $destinationDir $packageName
 
     # Are there any files to move?
-    if (!(Test-Path $source) -or ((Get-ChildItem $source | Measure-Object).Count) -eq 0) {
-        log "    - $shortSource is not present in this package" -Debug
+    if (!(Test-Path $sourceDir) -or ((Get-ChildItem $sourceDir | Measure-Object).Count) -eq 0) {
+        log "    - $shortSrc is not present in this package" -Debug
         return
     }
 
-    $destDir = (Join-Path $destRoot $packageName)
+    $outputDir = (Join-Path $destinationDir $packageName)
 
-    log "    * copying $shortSource to $shortDest"
-    log "    * $source" -Debug
-    log "    --> $(Join-Path $destRoot $packageName)" -Debug
-
+    log "    * Copying $shortSrc to $shortDest"
+    log "    * $sourceDir -->" -Debug
+    log "        $outputDir" -Debug
     Debug-Pause
 
-    # Simple/Fast option: destDir does not exist at all.
-    if (!(Test-Path $destDir)) {
+    # Simple/Fast option: outputDir does not exist at all.
+    if (!(Test-Path $outputDir)) {
 
         # Ensure parent directory exists
-        if (!(Test-Path $destRoot)) {
-            New-Item $destRoot -ItemType Directory | Out-Null
+        if (!(Test-Path $destinationDir)) {
+            New-Item $destinationDir -ItemType Directory | Out-Null
         }
 
         # Just copy the whole folder over into parent, and then rename it
-        Move-Item -Path $source -Destination "$destRoot" -PassThru | Rename-Item -Force -NewName $packageName
+        Move-Item -Path $sourceDir -Destination $destinationDir -PassThru | Rename-Item -Force -NewName $packageName
 
     } else {
         # Hard-mode. We have to merge the contents of these directories. Don't allow *file* collisions:
         # we'll call those malformed packages.
 
-
         # For every file in all subdirectories of source: move it to where it's supposed to go.
-        foreach ($dirEntry in Get-ChildItem $source -Force -Recurse -File) {
+        foreach ($dirEntry in Get-ChildItem $sourceDir -Force -Recurse -File) {
 
             # Why am I manipulating strings like this I hate everything ='(
-            $destFile = ($dirEntry.FullName).substring($dirEntry.FullName.indexOf($source) + $source.Length + 1)
+            $destFile = ($dirEntry.FullName).substring($dirEntry.FullName.indexOf($sourceDir) + $sourceDir.Length + 1)
 
             # This is gross too =''(
-            $finalDestination = Join-Path $destDir $destFile # fox only, no items
-            $ultimateDir = Split-Path $finalDestination
+            $finalDestination = Join-Path $outputDir $destFile
+            $ultimateDir = Split-Path $finalDestination # fox only, no items
 
             if (!(Test-Path $ultimateDir)) {
                 New-Item $ultimateDir -ItemType Directory | Out-Null
@@ -156,15 +212,52 @@ function Move-DirContents($source, $destRoot, $packageName) {
         # In retrospect, it would've been nice to implement this in terms of the above when possible?
         # Or, at the very least, clean up all the folders we've left behind...
         $leftOvers = 0
-        foreach ($dirEntry in Get-ChildItem $source -Force -Recurse -File) {
+        foreach ($dirEntry in Get-ChildItem $sourceDir -Force -Recurse -File) {
             $leftOvers += 1
         }
         if ($leftOvers -eq 0) {
-            foreach ($dirEntry in Get-ChildItem $source -Force -Directory) {
+            foreach ($dirEntry in Get-ChildItem $sourceDir -Force -Directory) {
                 Remove-Item $($dirEntry.FullName) -Recurse -Force
             }
         }
     }
+}
+
+function Get-LoggableNames($sourceDir, $destinationDir, $packageName) {
+    $shortSource = Splice-Path $sourceDir $nugetRootFolder
+    $shortDest = Splice-Path $destinationDir $nugetParentDir -IncludeParent
+
+    return $shortSource, (Join-Path $shortDest $packageName)
+}
+
+function Splice-Path($path, $ancestor, [switch]$includeParent) {
+    # Split into folders, find first index of ancestor, and return the rest from there...
+    $folders = $path.Split([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+    $ancestors = $ancestor.Split([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+
+    $index = 0
+    $ancestorMatch = $false
+    while ($ancestorMatch -eq $false -and $index -lt $folders.Count) {
+        if ($folders[$index] -eq $ancestors[$ancestors.Count-1]) {
+            $ancestorMatch = $true
+            for ($i = 1; $i -lt $ancestors.Count-1; $i += 1) {
+                $ancestors = $ancestors -and $folders[$index-$i] -eq $ancestors[$ancestors.Count-1-$i]
+            }
+        }
+        $index += 1
+    }
+
+    $startIndex = $index
+    if ($includeParent.IsPresent -and $index -gt 0) {
+        $startIndex = $index - 1
+    }
+
+    $result = $folders[$startIndex]
+    for ($i = $startIndex+1; $i -lt $folders.Count; $i += 1) {
+        $result = Join-Path $result $folders[$i]
+    }
+
+    return $result
 }
 
 function Configure-Log() {
@@ -193,11 +286,11 @@ function Configure-Log() {
 
     if ($success -ne $true) {
         $script:logFile = $null
-        log("!!! Unable to log this output to a file.")
+        log "!!! Unable to log this output to a file."
     } else {
-        log("Logging to file " + $(Resolve-Path $logFile))
+        log "Logging to file $(Resolve-Path $logFile)"
         if ($fallBackIndex -gt 0) {
-            log("    (Unable to write to " + $(Resolve-Path $orig) + " due to errors.")
+            log "    (Unable to write to $(Resolve-Path $orig) due to errors.)"
         }
     }
 }
@@ -211,7 +304,7 @@ function log() {
 
     if ($AsError.IsPresent) {
         Write-Error "$msg"
-    } elseif ($alwaysDebug -eq $true -or !$Debug.IsPresent) {
+    } elseif ($alwaysDebug -eq $true -or $verbose.IsPresent -or !$Debug.IsPresent) {
         echo "$msg"
     }
 
@@ -261,10 +354,14 @@ function Write-StdErr {
 }
 
 function Debug-Pause() {
-    if ($alwaysDebug -eq $true) {
+    if ($alwaysDebug -eq $true -or $interactive.IsPresent) {
         pause
     }
 }
 
+# wtf PowerShell...
+function max($arr) {
+    return ($arr | Measure-Object -Maximum).Maximum
+}
 
 Main
