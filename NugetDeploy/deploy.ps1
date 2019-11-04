@@ -7,6 +7,7 @@ trap{ VT-Deploy-Trap-Handler }
 Set-Up
 
 Deploy-Package "..\vrtk.nuspec"
+Deploy-Package "..\vrtk_samples.nuspec"
 
 Clean-Up
 
