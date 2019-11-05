@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>com.vthera.vrtk</id>
-    <version>3.4.0-test</version>
+    <version>3.4.0</version>
     <title>Virtual Reality Toolkit</title>
     <authors>Virtual Therapeutics</authors>
     <owners>Clayton</owners>
