@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.4.0
+
+## Features
+
+ * **SteamVR/OpenVR 2.0**
+   * incorporate community patch to support the new OpenVR input system
+ * **Assembly-Definition Friendly**
+   * packaged in a way that is friendly to projects that wish to use nuget
+
 # 3.3.0
 
 ## Bug Fixes
