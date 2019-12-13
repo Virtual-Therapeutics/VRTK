@@ -1,4 +1,4 @@
-﻿namespace VRTK.Examples.Tests
+namespace VRTK.Examples.Tests
 {
     using UnityEngine;
     using System.Collections;
@@ -18,38 +18,38 @@
         protected virtual void BeginTest(string name, int level = 1)
         {
             currentTest = name;
-            Debug.Log("<color=darkblue><b>" + "".PadLeft(level, '#') + " Starting Tests for " + name + "</b></color>");
+            VRTK_Logger.Info("<color=darkblue><b>" + "".PadLeft(level, '#') + " Starting Tests for " + name + "</b></color>");
         }
 
         protected virtual void SetUp(string message)
         {
             currentSetup = message;
-            Debug.Log("<color=blue><b>#### Preparing test for " + message + "</b></color>");
+            VRTK_Logger.Info("<color=blue><b>#### Preparing test for " + message + "</b></color>");
         }
 
         protected virtual void TearDown()
         {
-            Debug.Log("==============================================================================");
+            VRTK_Logger.Info("==============================================================================");
         }
 
         protected virtual void Assert(string description, bool assertion, string failure, string success = "")
         {
             if (assertion)
             {
-                Debug.Log("<color=teal><b>## [" + description + "] PASSED ##</b></color>");
+                VRTK_Logger.Info("<color=teal><b>## [" + description + "] PASSED ##</b></color>");
             }
             else
             {
-                Debug.Log("<color=maroon><b>## [" + description + "] FAILED INSIDE [" + currentTest + "." + currentSetup + "]##</b></color>");
+                VRTK_Logger.Info("<color=maroon><b>## [" + description + "] FAILED INSIDE [" + currentTest + "." + currentSetup + "]##</b></color>");
             }
 
             if (!assertion)
             {
-                Debug.LogException(new System.Exception(failure));
+                VRTK_Logger.Error(new System.Exception(failure));
             }
             else if (success != "")
             {
-                Debug.Log("<color=purple><i> ~~~~~> " + success + "</i></color>");
+                VRTK_Logger.Info("<color=purple><i> ~~~~~> " + success + "</i></color>");
             }
         }
 

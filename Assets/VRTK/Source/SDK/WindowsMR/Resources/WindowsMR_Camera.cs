@@ -1,4 +1,4 @@
-﻿namespace VRTK
+namespace VRTK
 {
     using UnityEngine;
 #if UNITY_2017_2_OR_NEWER
@@ -60,7 +60,7 @@
         {
             if (XRSettings.enabled == false)
             {
-                Debug.LogError("XRSettings are not enabled. Enable in PlayerSettings. Do not forget to add Windows Mixed Reality to Virtual Reality SDKs.");
+                VRTK_Logger.Error("XRSettings are not enabled. Enable in PlayerSettings. Do not forget to add Windows Mixed Reality to Virtual Reality SDKs.");
                 return false;
             }
             else
@@ -72,7 +72,7 @@
                         return true;
                     }
                 }
-                Debug.LogError("Windows Mixed Reality is not supported in XRSettings, add in PlayerSettings.");
+                VRTK_Logger.Error("Windows Mixed Reality is not supported in XRSettings, add in PlayerSettings.");
             }
 
             return false;
@@ -93,7 +93,7 @@
 
             if (camera.stereoTargetEye != StereoTargetEyeMask.Both)
             {
-                Debug.LogError("Target eye of main camera is not set to both. Are you sure you want to render only one eye?");
+                VRTK_Logger.Warn("Target eye of main camera is not set to both. Are you sure you want to render only one eye?");
             }
         }
     }

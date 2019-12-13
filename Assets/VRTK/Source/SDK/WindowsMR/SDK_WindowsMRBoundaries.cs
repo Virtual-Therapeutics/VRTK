@@ -1,4 +1,4 @@
-﻿// WindowsMR Boundaries|SDK_WindowsMR|005
+// WindowsMR Boundaries|SDK_WindowsMR|005
 namespace VRTK
 {
     using UnityEngine;
@@ -88,7 +88,7 @@ namespace VRTK
                 }
                 else
                 {
-                    Debug.LogWarning("Boundary has no points");
+                    VRTK_Logger.Warn("Boundary has no points");
                 }
             }
 #endif

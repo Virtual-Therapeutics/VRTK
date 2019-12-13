@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 namespace VRTK.Examples.Utilities
 {
     using UnityEngine;
@@ -42,7 +42,7 @@ namespace VRTK.Examples.Utilities
                     {
                         ovrManager.trackingOriginType = OVRManager.TrackingOrigin.FloorLevel;
                         trackingLevelFloor = true;
-                        Debug.Log("Forced Oculus Tracking to Floor Level");
+                        VRTK_Logger.Info("Forced Oculus Tracking to Floor Level");
                     }
                 }
             }
@@ -57,7 +57,7 @@ namespace VRTK.Examples.Utilities
 
             if (oculusSDK == null || oculusSDK.GetComponentInChildren<OVRManager>() != null)
             {
-                Debug.Log("No Oculus Repaired Required");
+                VRTK_Logger.Info("No Oculus Repaired Required");
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace VRTK.Examples.Utilities
                 oculusSetup.actualHeadset = GameObject.Find(oculusPath + "/OVRCameraRig/TrackingSpace/CenterEyeAnchor");
                 oculusSetup.actualLeftController = GameObject.Find(oculusPath + "/OVRCameraRig/TrackingSpace/LeftHandAnchor");
                 oculusSetup.actualRightController = GameObject.Find(oculusPath + "/OVRCameraRig/TrackingSpace/RightHandAnchor");
-                Debug.Log("Successfully repaired Oculus OVRCameraRig prefab");
+                VRTK_Logger.Info("Successfully repaired Oculus OVRCameraRig prefab");
             }
 
             GameObject ovrAvatar = null;
@@ -121,7 +121,7 @@ namespace VRTK.Examples.Utilities
                 GameObject.Find(oculusPath + "/LocalAvatar/hand_right").SetActive(false);
                 VRTK_TransformFollow transformFollow = ovrAvatar.AddComponent<VRTK_TransformFollow>();
                 transformFollow.gameObjectToFollow = ovrCameraRig;
-                Debug.Log("Successfully repaired Oculus LocalAvatar prefab");
+                VRTK_Logger.Info("Successfully repaired Oculus LocalAvatar prefab");
             }
 #endif
         }

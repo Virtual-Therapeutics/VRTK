@@ -1,4 +1,4 @@
-﻿namespace VRTK
+namespace VRTK
 {
     using UnityEngine;
 #if VRTK_DEFINE_SDK_WINDOWSMR && UNITY_2017_2_OR_NEWER
@@ -241,7 +241,8 @@
                     break;
 
                 case InteractionSourceHandedness.Unknown:
-                    Debug.LogError("Handedness of " + gameObject.name + " is not set.");
+                    VRTK_Logger.Warn("Handedness of " + gameObject.name + " is not set. Assuming right.");
+                    index = 2;
                     break;
             }
 

@@ -1,4 +1,4 @@
-﻿namespace VRTK.Examples
+namespace VRTK.Examples
 {
     using UnityEngine;
     using UnityEngine.UI;
@@ -31,7 +31,7 @@
         {
             if (outputOnMax != "")
             {
-                Debug.Log(outputOnMax);
+                VRTK_Logger.Info(outputOnMax);
             }
         }
 
@@ -39,7 +39,7 @@
         {
             if (outputOnMin != "")
             {
-                Debug.Log(outputOnMin);
+                VRTK_Logger.Info(outputOnMin);
             }
         }
     }
