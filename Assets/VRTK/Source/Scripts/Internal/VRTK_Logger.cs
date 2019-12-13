@@ -1,5 +1,6 @@
-﻿namespace VRTK
+namespace VRTK
 {
+    using log4net;
     using UnityEngine;
 #if UNITY_EDITOR
     using UnityEditor;
@@ -11,6 +12,9 @@
 
     public class VRTK_Logger : MonoBehaviour
     {
+        // Using log4net makes a lot of this redundant, but I don't really care to rip it all out.
+        private static readonly ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public enum LogLevels
         {
             Trace,
@@ -125,9 +129,19 @@
             Log(LogLevels.Warn, message);
         }
 
+        public static void Warn(Exception exception, bool forcePause = false)
+        {
+            Log(LogLevels.Warn, exception.Message, forcePause);
+        }
+
         public static void Error(string message, bool forcePause = false)
         {
             Log(LogLevels.Error, message, forcePause);
+        }
+
+        public static void Error(Exception exception, bool forcePause = false)
+        {
+            Log(LogLevels.Error, exception.Message, forcePause);
         }
 
         public static void Fatal(string message, bool forcePause = false)
@@ -156,14 +170,20 @@
             {
                 case LogLevels.Trace:
                 case LogLevels.Debug:
+                    _log.Debug(message);
+                    break;
                 case LogLevels.Info:
-                    UnityEngine.Debug.Log(message);
+                    _log.Info(message);
                     break;
                 case LogLevels.Warn:
-                    UnityEngine.Debug.LogWarning(message);
+                    _log.Warn(message);
                     break;
                 case LogLevels.Error:
+                    _log.Error(message);
+                    break;
                 case LogLevels.Fatal:
+                    _log.Fatal(message);
+
                     if (forcePause)
                     {
                         UnityEngine.Debug.Break();
@@ -172,10 +192,6 @@
                     if (instance.throwExceptions)
                     {
                         throw new Exception(message);
-                    }
-                    else
-                    {
-                        UnityEngine.Debug.LogError(message);
                     }
                     break;
             }
