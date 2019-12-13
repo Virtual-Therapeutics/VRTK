@@ -61,3 +61,4 @@ sysinfo.txt
 StyleCop*
 
 *.log
+Assets/3rdParty/nuget_packages/
