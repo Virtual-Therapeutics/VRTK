@@ -1,10 +1,11 @@
-﻿// SteamVR Boundaries|SDK_SteamVR|005
+// SteamVR Boundaries|SDK_SteamVR|005
 // DISCLAIMER: the code changes herein (for compatability with SteamVR Plugin 2.2.x) were created by a third party (WildStyle69) outside of VRTK, and are unsupported. VRTK takes no responsibility for the usage of this code, nor will provide any official support via GitHub or Slack.
 namespace VRTK
 {
-    using Valve.VR;
+
 #if VRTK_DEFINE_SDK_STEAMVR
     using UnityEngine;
+    using Valve.VR;
 #endif
 
     /// <summary>
