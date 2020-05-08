@@ -12,7 +12,7 @@
 |---------------|---------------|
 | UnityEngine.VR | _Core Unity3d library_ |
 | VR Simulator | _Included_ |
-| SteamVR 1.2.3 | [SteamVR Plugin] |
+| * SteamVR | [SteamVR Plugin] |
 | Oculus | [Oculus Integration] |
 | Windows Mixed Reality | [Windows Mixed Reality For Unity] |
 | * Ximmerse | [Ximmerse Unity SDK] |
@@ -21,7 +21,11 @@
 
 _* unsupported/experimental_
 
-> *NOTE:* SteamVR 2 is not supported.
+> *NOTE:* SteamVR 2 is not _officially_ supported,
+> however this code base has been updated to work with
+> SteamVR Plugin 2.2.0 and the new SteamVR Input System.
+> Be sure to check the [README-SVR2IS.md] file for more
+> details, which can be found in the main VRTK folder.
 
 ## Documentation
 
@@ -114,7 +118,7 @@ Code released under the [MIT License].
 
 Any Third Party Licenses can be viewed in [THIRD_PARTY_NOTICES.md].
 
-[SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/1.2.3/SteamVR.Plugin.unitypackage
+[SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.2.0/SteamVR_v220.unitypackage
 [SteamVR Plugin for Unity3d Github Repo]: https://github.com/ValveSoftware/openvr/tree/master/unity_package/Assets/SteamVR
 [Oculus Integration]: https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022
 [Ximmerse Unity SDK]: https://github.com/Ximmerse/SDK/tree/master/Unity
@@ -126,6 +130,7 @@ Any Third Party Licenses can be viewed in [THIRD_PARTY_NOTICES.md].
 [THIRD_PARTY_NOTICES.md]: THIRD_PARTY_NOTICES.md
 [CONTRIBUTING.md]: /.github/CONTRIBUTING.md
 
+[README-SVR2IS.md]: /Assets/VRTK/README-SVR2IS.md
 [FAQ.md]: /Assets/VRTK/Documentation/FAQ.md
 [MADE_WITH_VRTK.md]: /Assets/VRTK/Documentation/MADE_WITH_VRTK.md
 [API.md]: /Assets/VRTK/Documentation/API.md
