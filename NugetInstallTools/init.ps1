@@ -110,6 +110,9 @@ function Main() {
     Move-DirContents $editorSourceDir $editorDestinationDir $packageName
     Move-DirContents $foundationSourceDir $foundationDestinationDir $packageName
     Move-DirContents $nativeSourceDir $runtimeDestinationDir $packageName
+	
+	#SteamVR needs action input files moved to the root directory
+	Move-SteamVR-Files $runtimeDestinationDir $nugetParentDir
 
     # TODO: check to see if any files are left behind and if so indicate that something's bad about the package?
 
@@ -125,6 +128,35 @@ function Main() {
     }
 
     log ""
+}
+
+function Move-SteamVR-Files($sourceDir, $parentDir) {
+	
+	$items = @("actions.json",
+			   "bindings_holographic_controller.json",
+			   "bindings_knuckles.json",
+			   "bindings_oculus_touch.json",
+			   "bindings_vive_controller.json")
+
+	$folders = get-ChildItem $sourceDir -recurse | where {$_.name -like "com.vthera.vrtk*"} | select name
+	
+	foreach ($folder in $folders.Name) {
+		$sourcePath = "$sourceDir\$folder\SteamVR_VRTK_Actions\1\"
+		if((Test-Path $sourcePath) -eq $False){
+			continue
+		}
+		$assetsFolder = (Split-Path -Path $parentDir)
+		$assetsParent = (Split-Path -Path $assetsFolder)
+		
+		foreach ($item in $items) {
+			$itemPath = "$sourcePath\$item"
+			$destPath = "$assetsParent\$item"
+			if((Test-Path $destPath) -eq $False)
+			{
+				Copy-Item -Path $itemPath -Destination $assetsParent
+			}
+		}
+	}
 }
 
 function Count-PackageFiles() {
