@@ -2,9 +2,10 @@
 // DISCLAIMER: the code changes herein (for compatability with SteamVR Plugin 2.2.x) were created by a third party (WildStyle69) outside of VRTK, and are unsupported. VRTK takes no responsibility for the usage of this code, nor will provide any official support via GitHub or Slack.
 namespace VRTK
 {
-#if VRTK_DEFINE_SDK_STEAMVR
     using UnityEngine;
+#if VRTK_DEFINE_SDK_STEAMVR
     using Valve.VR;
+#endif
 
     /// <summary>
     /// SDK SteamVR Input Source handles input commmunication with the SteamVR Input System. 
@@ -14,7 +15,8 @@ namespace VRTK
     /// </remarks>
     public class SDK_SteamVRInputSource : MonoBehaviour
     {
-    #region Variables
+#if VRTK_DEFINE_SDK_STEAMVR
+        #region Variables
 
         // Variables
         // ----------
@@ -73,9 +75,9 @@ namespace VRTK
         private SDK_BaseController.ControllerType _currentControllerType = SDK_BaseController.ControllerType.Undefined;
         //>
         
-    #endregion Variables
+        #endregion Variables
 
-    #region Unity Methods
+        #region Unity Methods
 
         /// <summary>
         /// On Enable
@@ -105,9 +107,9 @@ namespace VRTK
         }
         //-->
 
-    #endregion Unity Methods
+        #endregion Unity Methods
 
-    #region Properties
+        #region Properties
 
         /// <summary>
         /// Current Hand Type
@@ -140,9 +142,9 @@ namespace VRTK
         }
         //>
 
-    #endregion Properties
+        #endregion Properties
 
-    #region Input Methods
+        #region Input Methods
 
         /// <summary>
         /// Get Axis Delta
@@ -351,9 +353,9 @@ namespace VRTK
         }
         //-->
 
-    #endregion Input Methods
+        #endregion Input Methods
 
-    #region Hair Trigger Methods
+        #region Hair Trigger Methods
 
         /// <summary>
         /// Update Hair Trigger
@@ -407,9 +409,9 @@ namespace VRTK
         }
         //-->
 
-    #endregion Hair Trigger Methods
+        #endregion Hair Trigger Methods
 
-    #region Haptic Methods
+        #region Haptic Methods
 
         /// <summary>
         /// Trigger Haptic Pulse
@@ -423,7 +425,8 @@ namespace VRTK
         }
         //-->
 
-    #endregion Haptic Methods
-    }
+        #endregion Haptic Methods
 #endif
+    }
+
 }
