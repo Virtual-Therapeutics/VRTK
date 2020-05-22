@@ -9,7 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>VRTK - A fork of VRTK as of version 3.3.0</description>
     <releaseNotes>
-	  3.4.2
+	  3.5.0
         * Introduction of SteamVR
 	  3.4.1
         * Improved logging with log4net
